@@ -42,8 +42,10 @@ if [ ! -f "${CERT_FIX_SCRIPT}" ]; then
         mkdir -p ${CERT_FIX_DIR}/work-usr_share_ca-certificates/
 
 	echo "Removing reference to expired LetsEncrypt root CA certificate..."
-
         cat /etc/ca-certificates.conf | sed '/^mozilla\/DST_Root_CA_X3.crt$/ s/./!&/' > ${CERT_FIX_DIR}/fixed-ca-certificates.conf
+
+        echo "Removing reference to weak eMudhra root CA certificate..."
+        cat /etc/ca-certificates.conf | sed '/^mozilla\/emSign.*$/ s/./!&/' > ${CERT_FIX_DIR}/fixed-ca-certificates.conf
 
         echo "Downloading custom CA Certificates..."
         echo
