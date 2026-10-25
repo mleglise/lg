@@ -51,6 +51,20 @@ echo "Downloading custom CA Certificates..."
 curl -k https://leglise.io/legliseioCA.pem --output ${CERT_FIX_DIR}/usr_share_ca-certificates/legliseioCA.crt
 echo "legliseioCA.crt" >> ${CERT_FIX_DIR}/fixed-ca-certificates.conf
 
+echo "Generating Bundle file for cURL and Browser..."
+cp /etc/ssl/certs/ca-certificates.crt ${CERT_FIX_DIR}/etc_ssl/certs/ca-certificates.crt 2>/dev/null || touch ${CERT_FIX_DIR}/etc_ssl/certs/ca-certificates.crt
+cat ${CERT_FIX_DIR}/usr_share_ca-certificates/*.crt >> ${CERT_FIX_DIR}/etc_ssl/certs/ca-certificates.crt
+
+echo "Generating OpenSSL Hash Symlinks..."
+for certfile in ${CERT_FIX_DIR}/usr_share_ca-certificates/*.crt; do
+    if command -v openssl >/dev/null 2>&1; then
+        HASH=$(openssl x509 -hash -noout -in "$certfile" 2>/dev/null)
+        HASH_OLD=$(openssl x509 -subject_hash_old -noout -in "$certfile" 2>/dev/null)
+        [ -n "$HASH" ] && ln -sf "$certfile" "${CERT_FIX_DIR}/etc_ssl/certs/${HASH}.0"
+        [ -n "$HASH_OLD" ] && ln -sf "$certfile" "${CERT_FIX_DIR}/etc_ssl/certs/${HASH_OLD}.0"
+    fi
+done
+
 echo
 echo "Creating startup certificate overlay script..."
 
