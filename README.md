@@ -1,12 +1,14 @@
 # LG webOS TV Tools
 
+Forked from: https://github.com/tf318/lg
+
 Only one tool here at the moment: a bash script to run on a rooted TV to update the recently expired LetsEncrypt CA certificates (useful for Plex or Emby setups that use LetsEncrypt certificates, since LG have not updated the CA certs on many TVs). You must have root on your TV. Once you have shell access, download this script with `curl` and run it.
 
 ## Quick Fix for CA Cert Update
 
 On a rooted B9 or C9 just open a shell on your TV (via telnet or ssh) and run the following command:
 
-    curl -k https://raw.githubusercontent.com/tf318/lg/main/update-ca-certs.sh | bash
+    curl -k https://raw.githubusercontent.com/mleglise/lg/main/update-ca-certs.sh | bash
 
 That's it. The TV will reboot, and the updated certs will be in place.
 
@@ -15,7 +17,7 @@ That's it. The TV will reboot, and the updated certs will be in place.
 Alternatively, if you would prefer to inspect/modify the content of the script before running it, do this instead:
 
     cd /tmp
-    curl -k https://raw.githubusercontent.com/tf318/lg/main/update-ca-certs.sh --output update-ca-certs.sh
+    curl -k https://raw.githubusercontent.com/mleglise/lg/main/update-ca-certs.sh --output update-ca-certs.sh
     chmod +x update-ca-certs.sh
     ./update-ca-certs.sh
 
