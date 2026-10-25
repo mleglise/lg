@@ -25,8 +25,10 @@ exit 1
 fi
 
 # Clear previous mount locks
-umount -l /etc/ssl/certs/ca-certificates.crt 2>/dev/null || true
 umount -l /etc/ca-certificates.conf 2>/dev/null || true
+umount -l /etc/ssl 2>/dev/null || true
+umount -l /usr/share/ca-certificates 2>/dev/null || true
+# umount -l /etc/ssl/certs/ca-certificates.crt 2>/dev/null || true
 
 # Cleanup previous invocations of this script
 rm -f ${CERT_FIX_SCRIPT}
@@ -36,7 +38,7 @@ rm -rf ${CERT_FIX_DIR}
 mkdir -p ${CERT_FIX_DIR}/etc_ssl/certs/
 mkdir -p ${CERT_FIX_DIR}/usr_share_ca-certificates/
 
-# Maybe not needed?
+# Work dirs - needed by mount overlay, but not otherwise used by this script
 mkdir -p ${CERT_FIX_DIR}/work-etc_ssl/
 mkdir -p ${CERT_FIX_DIR}/work-usr_share_ca-certificates/
 
@@ -73,7 +75,7 @@ echo "# ${PURPOSE}" >> ${CERT_FIX_SCRIPT}
 echo "mount --bind ${CERT_FIX_DIR}/fixed-ca-certificates.conf /etc/ca-certificates.conf" >> ${CERT_FIX_SCRIPT}
 echo "mount -t overlay overlay -o lowerdir=/etc/ssl,upperdir=${CERT_FIX_DIR}/etc_ssl,workdir=${CERT_FIX_DIR}/work-etc_ssl /etc/ssl" >> ${CERT_FIX_SCRIPT}
 echo "mount -t overlay overlay -o lowerdir=/usr/share/ca-certificates,upperdir=${CERT_FIX_DIR}/usr_share_ca-certificates,workdir=${CERT_FIX_DIR}/work-usr_share_ca-certificates /usr/share/ca-certificates" >> ${CERT_FIX_SCRIPT}
-echo "update-ca-certificates" >> ${CERT_FIX_SCRIPT}
+echo "update-ca-certificates --fresh 2>/dev/null || true" >> ${CERT_FIX_SCRIPT}
 echo "" >> ${CERT_FIX_SCRIPT}
 
 chmod a+x ${CERT_FIX_SCRIPT}
